@@ -1,0 +1,152 @@
+2025-08-25 00:26:58,365 | INFO | Running continuously every 5 sec
+2025-08-25 00:27:06,556 | ERROR | Server responded 400: {"processes":[{},{},{"name":["This field may not be blank."]},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},
+2025-08-25 00:27:08,091 | ERROR | Server responded 400: {"processes":[{},{},{"name":["This field may not be blank."]},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},
+2025-08-25 00:27:11,133 | ERROR | Server responded 400: {"processes":[{},{},{"name":["This field may not be blank."]},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},
+2025-08-25 00:27:27,293 | ERROR | Server responded 400: {"processes":[{},{},{"name":["This field may not be blank."]},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},
+2025-08-25 00:27:28,826 | ERROR | Server responded 400: {"processes":[{},{},{"name":["This field may not be blank."]},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},
+2025-08-25 00:27:31,867 | ERROR | Server responded 400: {"processes":[{},{},{"name":["This field may not be blank."]},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},
+2025-08-25 00:36:05,015 | INFO | Running continuously every 5 sec
+2025-08-25 00:36:13,608 | ERROR | Server responded 400: {"processes":[{},{},{"name":["This field may not be blank."]},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},
+2025-08-25 00:36:15,143 | ERROR | Server responded 400: {"processes":[{},{},{"name":["This field may not be blank."]},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},
+2025-08-25 00:37:30,389 | INFO | Running continuously every 5 sec
+2025-08-25 00:37:39,814 | INFO | Snapshot sent successfully: 201
+2025-08-25 00:37:50,401 | INFO | Snapshot sent successfully: 201
+2025-08-25 00:38:00,947 | INFO | Snapshot sent successfully: 201
+2025-08-25 00:38:11,423 | INFO | Snapshot sent successfully: 201
+2025-08-25 00:38:21,775 | INFO | Snapshot sent successfully: 201
+2025-08-25 01:01:34,817 | INFO | Running continuously every 5 sec
+2025-08-25 01:01:46,136 | INFO | Snapshot sent successfully: 201
+2025-08-25 01:01:57,498 | INFO | Snapshot sent successfully: 201
+2025-08-25 01:02:09,523 | INFO | Snapshot sent successfully: 201
+2025-08-25 01:53:51,348 | INFO | Running continuously every 5 sec
+2025-08-25 02:01:28,664 | INFO | Running continuously every 5 sec
+2025-08-25 02:34:33,458 | INFO | Running continuously every 5 sec
+2025-08-25 02:34:45,625 | INFO | Snapshot sent successfully: 201
+2025-08-25 02:34:57,680 | INFO | Snapshot sent successfully: 201
+2025-08-25 02:35:09,757 | INFO | Snapshot sent successfully: 201
+2025-08-25 02:35:21,849 | INFO | Snapshot sent successfully: 201
+2025-08-25 02:35:34,241 | INFO | Snapshot sent successfully: 201
+2025-08-25 02:35:47,162 | INFO | Snapshot sent successfully: 201
+2025-08-25 02:35:59,339 | INFO | Snapshot sent successfully: 201
+2025-08-25 02:36:11,654 | INFO | Snapshot sent successfully: 201
+2025-08-25 02:36:23,601 | INFO | Snapshot sent successfully: 201
+2025-08-25 02:36:35,939 | INFO | Snapshot sent successfully: 201
+2025-08-25 02:36:48,418 | INFO | Snapshot sent successfully: 201
+2025-08-25 02:45:33,185 | INFO | Running continuously every 5 sec
+2025-08-25 02:54:23,740 | INFO | Running continuously every 5 sec
+2025-08-25 02:54:36,233 | INFO | Snapshot sent successfully: 201
+2025-08-25 02:54:48,543 | INFO | Snapshot sent successfully: 201
+2025-08-25 02:55:00,806 | INFO | Snapshot sent successfully: 201
+2025-08-25 02:55:13,455 | INFO | Snapshot sent successfully: 201
+2025-08-25 02:55:25,826 | INFO | Snapshot sent successfully: 201
+2025-08-25 02:57:03,628 | INFO | Running continuously every 5 sec
+2025-08-25 02:57:19,138 | INFO | Snapshot sent successfully: 201
+2025-08-25 02:57:34,270 | INFO | Snapshot sent successfully: 201
+2025-08-25 02:57:46,749 | INFO | Snapshot sent successfully: 201
+2025-08-25 02:57:58,718 | INFO | Snapshot sent successfully: 201
+2025-08-25 02:58:19,982 | INFO | Running continuously every 5 sec
+2025-08-25 02:58:32,177 | INFO | Snapshot sent successfully: 201
+2025-08-25 02:58:44,339 | INFO | Snapshot sent successfully: 201
+2025-08-25 02:58:56,766 | INFO | Snapshot sent successfully: 201
+2025-08-25 02:59:11,620 | INFO | Snapshot sent successfully: 201
+2025-08-25 02:59:25,475 | INFO | Snapshot sent successfully: 201
+2025-08-25 02:59:39,757 | INFO | Snapshot sent successfully: 201
+2025-08-25 02:59:53,577 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:00:07,502 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:00:21,052 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:00:35,629 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:00:49,269 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:01:04,271 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:01:18,565 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:01:31,158 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:01:43,375 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:01:55,910 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:02:08,271 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:02:20,706 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:02:33,182 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:02:45,721 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:02:57,905 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:03:10,131 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:03:22,568 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:03:35,170 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:03:47,294 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:03:59,204 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:04:11,927 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:04:24,271 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:04:36,573 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:04:48,866 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:05:01,201 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:05:13,960 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:05:26,518 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:05:38,824 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:05:51,301 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:06:04,463 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:06:16,802 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:06:29,151 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:06:41,656 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:07:20,132 | INFO | Running continuously every 5 sec
+2025-08-25 03:07:32,530 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:07:44,933 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:07:59,480 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:08:13,816 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:08:28,248 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:08:42,014 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:08:56,460 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:09:10,518 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:09:24,038 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:09:37,608 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:09:51,225 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:10:05,008 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:10:19,964 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:10:33,003 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:10:46,155 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:10:59,282 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:11:12,380 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:11:25,665 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:11:39,200 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:11:52,264 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:12:05,597 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:13:24,205 | INFO | Running continuously every 5 sec
+2025-08-25 03:13:39,862 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:13:54,208 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:14:08,630 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:14:22,607 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:14:36,728 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:14:50,390 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:15:05,287 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:15:20,527 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:15:35,440 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:15:49,594 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:16:03,854 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:16:16,843 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:16:29,600 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:16:42,553 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:16:55,172 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:17:08,007 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:17:20,743 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:17:33,413 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:17:46,505 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:17:59,115 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:18:11,590 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:18:24,203 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:18:36,635 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:18:49,176 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:19:01,528 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:19:13,913 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:19:26,210 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:19:38,481 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:19:51,124 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:20:03,642 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:20:15,737 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:20:27,809 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:20:39,847 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:20:52,311 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:21:04,737 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:26:26,725 | INFO | Running continuously every 5 sec
+2025-08-25 03:26:39,844 | ERROR | POST failed: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /api/v1/process-snapshots/ (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001D25EDCB770>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+2025-08-25 03:26:43,371 | ERROR | POST failed: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /api/v1/process-snapshots/ (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001D25EDF3750>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+2025-08-25 03:26:48,418 | ERROR | POST failed: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /api/v1/process-snapshots/ (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001D25F700050>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+2025-08-25 03:33:20,800 | INFO | Running continuously every 5 sec
+2025-08-25 03:33:32,695 | INFO | Snapshot sent successfully: 201
+2025-08-25 03:33:46,617 | ERROR | POST failed: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /api/v1/process-snapshots/ (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x00000246DD6D2AD0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+2025-08-25 03:33:50,158 | ERROR | POST failed: HTTPConnectionPool(host='127.0.0.1', port=8000): Max retries exceeded with url: /api/v1/process-snapshots/ (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x00000246DD6D2C10>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))

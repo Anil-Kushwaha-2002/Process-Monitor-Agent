@@ -1,0 +1,51 @@
+2025-08-25 02:16:02,356 | ERROR | Fatal error: Missing C:\Users\kumar\Downloads\process-monitor\process-monitor\agent.ini
+Traceback (most recent call last):
+  File "monitor_agent.py", line 134, in <module>
+    if interval <= 0:
+        ^^^^^^
+  File "monitor_agent.py", line 117, in main
+    if r.status_code // 100 == 2:
+    ^^^^^^^^^^^
+  File "monitor_agent.py", line 33, in load_config
+    raise FileNotFoundError(f"Missing {CONFIG_PATH}")
+FileNotFoundError: Missing C:\Users\kumar\Downloads\process-monitor\process-monitor\agent.ini
+2025-08-25 02:25:24,493 | ERROR | Fatal error: Missing C:\Users\kumar\Downloads\process-monitor\process-monitor\agent.ini
+Traceback (most recent call last):
+  File "monitor_agent.py", line 148, in <module>
+    main()
+    ~~~~^^
+  File "monitor_agent.py", line 131, in main
+    cfg = load_config()
+  File "monitor_agent.py", line 33, in load_config
+    raise FileNotFoundError(f"Missing {CONFIG_PATH}")
+FileNotFoundError: Missing C:\Users\kumar\Downloads\process-monitor\process-monitor\agent.ini
+2025-08-25 02:25:46,837 | ERROR | Fatal error: Missing C:\Users\kumar\Downloads\process-monitor\process-monitor\agent.ini
+Traceback (most recent call last):
+  File "monitor_agent.py", line 148, in <module>
+    main()
+    ~~~~^^
+  File "monitor_agent.py", line 131, in main
+    cfg = load_config()
+  File "monitor_agent.py", line 33, in load_config
+    raise FileNotFoundError(f"Missing {CONFIG_PATH}")
+FileNotFoundError: Missing C:\Users\kumar\Downloads\process-monitor\process-monitor\agent.ini
+2025-08-25 03:31:13,395 | ERROR | Fatal error: Missing C:\Users\kumar\Downloads\process-monitor-agent\process-monitor-agent\agent.ini
+Traceback (most recent call last):
+  File "C:\Users\kumar\Downloads\process-monitor-agent\process-monitor-agent\agent\monitor_agent.py", line 148, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\kumar\Downloads\process-monitor-agent\process-monitor-agent\agent\monitor_agent.py", line 131, in main
+    cfg = load_config()
+  File "C:\Users\kumar\Downloads\process-monitor-agent\process-monitor-agent\agent\monitor_agent.py", line 33, in load_config
+    raise FileNotFoundError(f"Missing {CONFIG_PATH}")
+FileNotFoundError: Missing C:\Users\kumar\Downloads\process-monitor-agent\process-monitor-agent\agent.ini
+2025-08-25 03:33:09,553 | ERROR | Fatal error: Missing C:\Users\kumar\Downloads\process-monitor-agent\process-monitor-agent\agent.ini
+Traceback (most recent call last):
+  File "C:\Users\kumar\Downloads\process-monitor-agent\process-monitor-agent\agent\monitor_agent.py", line 148, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\kumar\Downloads\process-monitor-agent\process-monitor-agent\agent\monitor_agent.py", line 131, in main
+    cfg = load_config()
+  File "C:\Users\kumar\Downloads\process-monitor-agent\process-monitor-agent\agent\monitor_agent.py", line 33, in load_config
+    raise FileNotFoundError(f"Missing {CONFIG_PATH}")
+FileNotFoundError: Missing C:\Users\kumar\Downloads\process-monitor-agent\process-monitor-agent\agent.ini

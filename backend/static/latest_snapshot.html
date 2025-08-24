@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>System Dashboard</title>
+    <meta http-equiv="refresh" content="10"> <!-- Auto refresh every 10s -->
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f9f9f9; }
+        .navbar {
+            display: flex; justify-content: center; padding: 15px; background: #333;
+        }
+        .navbar button {
+            margin: 0 10px; padding: 10px 20px; border: none; cursor: pointer;
+            background: #555; color: white; font-size: 16px; border-radius: 5px;
+        }
+        .navbar button:hover { background: #777; }
+
+        .content { padding: 20px; }
+        .hidden { display: none; }
+
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+
+        .bar-container {
+            width: 100%; background-color: #f2f2f2;
+            border-radius: 3px; overflow: hidden;
+        }
+        .cpu-bar { height: 16px; background-color: #ff4d4d; }
+        .mem-bar { height: 16px; background-color: #ffa500; }
+        .bar-label { font-size: 12px; padding-left: 4px; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <button onclick="showSection('system')">System Details</button>
+        <button onclick="showSection('process')">Process Details</button>
+    </div>
+
+    <div class="content">
+        <!-- System Section -->
+        <div id="system" class="">
+            <h2>System Details</h2>
+            <p><strong>Hostname:</strong> {{ snapshot.hostname }}</p>
+            <p><strong>Snapshot ID:</strong> {{ snapshot.id }}</p>
+            <p><strong>Created At:</strong> {{ snapshot.created_at }}</p>
+        </div>
+
+        <!-- Process Section -->
+        <div id="process" class="hidden">
+            <h2>Process Details</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>PID</th>
+                        <th>PPID</th>
+                        <th>Name</th>
+                        <th>CPU Usage</th>
+                        <th>Memory RSS</th>
+                        <th>Memory %</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for process in snapshot.processes.all %}
+                    <tr>
+                        <td>{{ process.pid }}</td>
+                        <td>{{ process.ppid }}</td>
+                        <td>{{ process.name }}</td>
+                        <td>
+                            <div class="bar-container">
+                                <div class="cpu-bar" style="width: {{ process.cpu_percent|default:0 }}%"></div>
+                                <span class="bar-label">{{ process.cpu_percent|default:0 }}%</span>
+                            </div>
+                        </td>
+                        <td>{{ process.mem_rss }}</td>
+                        <td>
+                            <div class="bar-container">
+                                <div class="mem-bar" style="width: {{ process.mem_percent|default:0 }}%"></div>
+                                <span class="bar-label">{{ process.mem_percent|default:0 }}%</span>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function showSection(section) {
+            document.getElementById('system').classList.add('hidden');
+            document.getElementById('process').classList.add('hidden');
+            document.getElementById(section).classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
+
+
+

@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Process Monitor</title>
+<style>
+body { margin:0; font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; background:#0b1220; color:#e5e7eb; }
+header { display:flex; gap:12px; align-items:center; padding:16px 20px; background:#111827; position:sticky; top:0; z-index:10; }
+h1, h2 { margin:0; }
+h1#system-name { font-size:20px; margin-bottom:10px; }
+.controls { margin-left:auto; display:flex; gap:8px; }
+.btn { background:#1f2937; color:#e5e7eb; border:1px solid #374151; padding:8px 12px; border-radius:10px; cursor:pointer; }
+.btn:hover { background:#2b3444; }
+.container { padding:16px 20px; }
+table { width:100%; border-collapse:collapse; margin-bottom:16px; }
+th, td { padding:8px 12px; border-bottom:1px solid #374151; text-align:left; vertical-align:middle; }
+th { background:#1f2937; }
+td { background:#111827; }
+.expand-btn { cursor:pointer; margin-right:6px; font-weight:bold; display:inline-block; width:14px; text-align:center; }
+.cpu-bar, .mem-bar { display:inline-block; height:8px; border-radius:4px; background:#1f2937; margin-left:4px; vertical-align:middle; }
+.cpu-bar-inner, .mem-bar-inner { height:100%; border-radius:4px; }
+.hostname { font-weight:600; }
+.search { background:#0b1220; color:#e5e7eb; border:1px solid #374151; border-radius:10px; padding:8px 10px; width:260px; }
+
+/* Collapsible tables */
+.toggle-header { cursor:pointer; user-select:none; margin-top:20px; }
+#system-table, #process-table { display:none; }
+tr.hidden { display:none; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🧩 Process Monitor</h1>
+  <input id="host" class="search" placeholder="Hostname (optional)" />
+  <div class="controls">
+    <button class="btn" id="refresh">Refresh</button>
+    <label style="display:flex;align-items:center;gap:6px" class="btn">
+      <input type="checkbox" id="autorefresh" /> Auto‑refresh 5s
+    </label>
+  </div>
+</header>
+
+<div class="container">
+  <!-- System Name Heading -->
+  <h1 id="system-name">🖥️ System: —</h1>
+
+  <h2 class="toggle-header">System Details ▼</h2>
+  <table id="system-table">
+    <tbody></tbody>
+  </table>
+
+  <h2 class="toggle-header">Process Tree Details ▼</h2>
+  <table id="process-table">
+    <thead>
+      <tr>
+        <th>PID</th>
+        <th>Name</th>
+        <th>CPU %</th>
+        <th>Memory</th>
+        <th>Memory %</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<script>
+const $ = s=>document.querySelector(s);
+let timer=null;
+
+// ---------------- Helper to format memory ----------------
+function formatBytes(b){
+  if(b==null) return '—';
+  const u=['B','KB','MB','GB','TB']; let i=0;
+  while(b>=1024 && i<u.length-1){ b/=1024; i++; }
+  return b.toFixed(1)+' '+u[i];
+}
+
+// ---------------- Build parent-child map ----------------
+function buildTree(processes){
+  const byPid = new Map();
+  const children = new Map();
+  processes.forEach(p=>{ byPid.set(p.pid,p); children.set(p.pid, []); });
+  const roots=[];
+  processes.forEach(p=>{
+    if(children.has(p.ppid)) children.get(p.ppid).push(p);
+    else roots.push(p);
+  });
+  return {roots, children};
+}
+
+// ---------------- Recursive row rendering ----------------
+function renderProcessRow(p, childrenMap, level=0, parentId=null){
+  const hasKids = (childrenMap.get(p.pid)||[]).length>0;
+  const tr = document.createElement('tr');
+  tr.dataset.pid = p.pid;
+  tr.dataset.ppid = parentId;
+  if(parentId) tr.classList.add('hidden');
+
+  const expandBtn = document.createElement('span');
+  expandBtn.className = 'expand-btn';
+  expandBtn.textContent = hasKids ? '+' : '';
+  expandBtn.addEventListener('click', e=>{
+    e.stopPropagation();
+    const show = expandBtn.textContent === '+';
+    expandBtn.textContent = show ? '−' : '+';
+    toggleChildren(p.pid, show);
+  });
+
+  tr.innerHTML = `
+    <td>${p.pid}</td>
+    <td style="padding-left:${level*18 + (hasKids?0:14)}px">${p.name}</td>
+    <td>${p.cpu_percent?.toFixed?.(1) ?? '—'}
+      <span class="cpu-bar"><span class="cpu-bar-inner" style="width:${p.cpu_percent||0}%;background:#22c55e"></span></span>
+    </td>
+    <td>${formatBytes(p.mem_rss)}
+      <span class="mem-bar"><span class="mem-bar-inner" style="width:${p.mem_percent||0}%;background:#3b82f6"></span></span>
+    </td>
+    <td>${p.mem_percent?.toFixed?.(1) ?? '—'}</td>
+  `;
+  tr.querySelector('td:nth-child(2)').prepend(expandBtn);
+
+  const rows = [tr];
+  (childrenMap.get(p.pid)||[]).sort((a,b)=>b.cpu_percent - a.cpu_percent).forEach(child=>{
+    rows.push(...renderProcessRow(child, childrenMap, level+1, p.pid));
+  });
+  return rows;
+}
+
+// ---------------- Toggle child visibility ----------------
+function toggleChildren(pid, show){
+  const childRows = document.querySelectorAll(`tr[data-ppid="${pid}"]`);
+  childRows.forEach(row=>{
+    if(show) row.classList.remove('hidden');
+    else row.classList.add('hidden');
+    const childPid = row.dataset.pid;
+    toggleChildren(childPid, show && !row.classList.contains('hidden'));
+  });
+}
+
+// ---------------- Load data ----------------
+async function load(){
+  const host=$('#host').value.trim();
+  const url = host ? `/api/v1/process-snapshots/latest?hostname=${encodeURIComponent(host)}` : '/api/v1/process-snapshots/latest';
+  const res = await fetch(url);
+  const systemTable = $('#system-table tbody');
+  const processTable = $('#process-table tbody');
+  systemTable.innerHTML = '';
+  processTable.innerHTML = '';
+
+  if(!res.ok){ 
+    systemTable.innerHTML = '<tr><td colspan="2">No data yet. Run the agent.</td></tr>';
+    $('#system-name').textContent = '🖥️ System: —';
+    return; 
+  }
+
+  const data = await res.json();
+
+  // Update system name heading
+  $('#system-name').textContent = `🖥️ System: ${data.hostname || '—'}`;
+
+  // System Details
+  const systemRows = [
+    ['Hostname', data.hostname],
+    ['Snapshot Time', new Date(data.created_at).toLocaleString()],
+    ['Total Processes', data.processes.length]
+  ];
+  systemRows.forEach(([k,v])=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML = `<th>${k}</th><td>${v}</td>`;
+    systemTable.appendChild(tr);
+  });
+
+  // Process Tree
+  const {roots, children} = buildTree(data.processes);
+  const allRows = [];
+  roots.sort((a,b)=>b.cpu_percent - a.cpu_percent).forEach(r=>{
+    allRows.push(...renderProcessRow(r, children));
+  });
+  allRows.forEach(r=>processTable.appendChild(r));
+}
+
+// ---------------- Event listeners ----------------
+$('#refresh').addEventListener('click', load);
+$('#autorefresh').addEventListener('change', (e)=>{
+  if(e.target.checked){ load(); timer=setInterval(load, 5000); }
+  else { clearInterval(timer); timer=null; }
+});
+
+// Collapsible headers
+document.querySelectorAll('.toggle-header').forEach(header => {
+  header.addEventListener('click', () => {
+    const nextTable = header.nextElementSibling;
+    if(nextTable.style.display === 'none' || nextTable.style.display === ''){
+      nextTable.style.display = 'table';
+      header.textContent = header.textContent.replace('▼','▲');
+    } else {
+      nextTable.style.display = 'none';
+      header.textContent = header.textContent.replace('▲','▼');
+    }
+  });
+});
+
+// Initial load
+load();
+</script>
+</body>
+</html>
+
+
+
+
+
+<!-- <!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Process Monitor</title>
+<style>
+body { margin:0; font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; background:#0b1220; color:#e5e7eb; }
+header { display:flex; gap:12px; align-items:center; padding:16px 20px; background:#111827; position:sticky; top:0; z-index:10; }
+h1 { font-size:18px; margin:0; }
+.controls { margin-left:auto; display:flex; gap:8px; }
+.btn { background:#1f2937; color:#e5e7eb; border:1px solid #374151; padding:8px 12px; border-radius:10px; cursor:pointer; }
+.btn:hover { background:#2b3444; }
+.container { padding:16px 20px; }
+table { width:100%; border-collapse:collapse; }
+th, td { padding:8px 12px; border-bottom:1px solid #374151; text-align:left; vertical-align:middle; }
+th { background:#1f2937; }
+td { background:#111827; }
+.expand-btn { cursor:pointer; margin-right:6px; font-weight:bold; display:inline-block; width:14px; text-align:center; }
+.cpu-bar, .mem-bar { display:inline-block; height:8px; border-radius:4px; background:#1f2937; margin-left:4px; vertical-align:middle; }
+.cpu-bar-inner, .mem-bar-inner { height:100%; border-radius:4px; }
+.hostname { font-weight:600; }
+.search { background:#0b1220; color:#e5e7eb; border:1px solid #374151; border-radius:10px; padding:8px 10px; width:260px; }
+tr.hidden { display:none; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🧩 Process Monitor</h1>
+  <input id="host" class="search" placeholder="Hostname (optional)" />
+  <div class="controls">
+    <button class="btn" id="refresh">Refresh</button>
+    <label style="display:flex;align-items:center;gap:6px" class="btn">
+      <input type="checkbox" id="autorefresh" /> Auto‑refresh 5s
+    </label>
+  </div>
+</header>
+
+<div class="container">
+  <h2>System Details</h2>
+  <table id="system-table">
+    <tbody></tbody>
+  </table>
+
+  <h2>Process Tree</h2>
+  <table id="process-table">
+    <thead>
+      <tr>
+        <th>PID</th>
+        <th>Name</th>
+        <th>CPU %</th>
+        <th>Memory</th>
+        <th>Memory %</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<script>
+const $ = s=>document.querySelector(s);
+let timer=null;
+
+// ---------------- Helper to format memory ----------------
+function formatBytes(b){
+  if(b==null) return '—';
+  const u=['B','KB','MB','GB','TB']; let i=0;
+  while(b>=1024 && i<u.length-1){ b/=1024; i++; }
+  return b.toFixed(1)+' '+u[i];
+}
+
+// ---------------- Build parent-child map ----------------
+function buildTree(processes){
+  const byPid = new Map();
+  const children = new Map();
+  processes.forEach(p=>{ byPid.set(p.pid,p); children.set(p.pid, []); });
+  const roots=[];
+  processes.forEach(p=>{
+    if(children.has(p.ppid)) children.get(p.ppid).push(p);
+    else roots.push(p);
+  });
+  return {roots, children};
+}
+
+// ---------------- Recursive row rendering ----------------
+function renderProcessRow(p, childrenMap, level=0, parentId=null){
+  const hasKids = (childrenMap.get(p.pid)||[]).length>0;
+  const tr = document.createElement('tr');
+  tr.dataset.pid = p.pid;
+  tr.dataset.ppid = parentId;
+  if(parentId) tr.classList.add('hidden');
+
+  const expandBtn = document.createElement('span');
+  expandBtn.className = 'expand-btn';
+  expandBtn.textContent = hasKids ? '+' : '';
+  expandBtn.addEventListener('click', e=>{
+    e.stopPropagation();
+    const show = expandBtn.textContent === '+';
+    expandBtn.textContent = show ? '−' : '+';
+    toggleChildren(p.pid, show);
+  });
+
+  tr.innerHTML = `
+    <td>${p.pid}</td>
+    <td style="padding-left:${level*18 + (hasKids?0:14)}px">${p.name}</td>
+    <td>${p.cpu_percent?.toFixed?.(1) ?? '—'}
+      <span class="cpu-bar"><span class="cpu-bar-inner" style="width:${p.cpu_percent||0}%;background:#22c55e"></span></span>
+    </td>
+    <td>${formatBytes(p.mem_rss)}
+      <span class="mem-bar"><span class="mem-bar-inner" style="width:${p.mem_percent||0}%;background:#3b82f6"></span></span>
+    </td>
+    <td>${p.mem_percent?.toFixed?.(1) ?? '—'}</td>
+  `;
+  tr.querySelector('td:nth-child(2)').prepend(expandBtn);
+
+  const rows = [tr];
+  (childrenMap.get(p.pid)||[]).sort((a,b)=>b.cpu_percent - a.cpu_percent).forEach(child=>{
+    rows.push(...renderProcessRow(child, childrenMap, level+1, p.pid));
+  });
+  return rows;
+}
+
+// ---------------- Toggle child visibility ----------------
+function toggleChildren(pid, show){
+  const childRows = document.querySelectorAll(`tr[data-ppid="${pid}"]`);
+  childRows.forEach(row=>{
+    if(show) row.classList.remove('hidden');
+    else row.classList.add('hidden');
+    const childPid = row.dataset.pid;
+    toggleChildren(childPid, show && !row.classList.contains('hidden'));
+  });
+}
+
+// ---------------- Load data ----------------
+async function load(){
+  const host=$('#host').value.trim();
+  const url = host ? `/api/v1/process-snapshots/latest?hostname=${encodeURIComponent(host)}` : '/api/v1/process-snapshots/latest';
+  const res = await fetch(url);
+  const systemTable = $('#system-table tbody');
+  const processTable = $('#process-table tbody');
+  systemTable.innerHTML = '';
+  processTable.innerHTML = '';
+
+  if(!res.ok){ 
+    systemTable.innerHTML = '<tr><td colspan="2">No data yet. Run the agent.</td></tr>';
+    return; 
+  }
+
+  const data = await res.json();
+
+  // System Details
+  const systemRows = [
+    ['Hostname', data.hostname],
+    ['Snapshot Time', new Date(data.created_at).toLocaleString()],
+    ['Total Processes', data.processes.length]
+  ];
+  systemRows.forEach(([k,v])=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML = `<th>${k}</th><td>${v}</td>`;
+    systemTable.appendChild(tr);
+  });
+
+  // Process Tree
+  const {roots, children} = buildTree(data.processes);
+  const allRows = [];
+  roots.sort((a,b)=>b.cpu_percent - a.cpu_percent).forEach(r=>{
+    allRows.push(...renderProcessRow(r, children));
+  });
+  allRows.forEach(r=>processTable.appendChild(r));
+}
+
+// ---------------- Event listeners ----------------
+$('#refresh').addEventListener('click', load);
+$('#autorefresh').addEventListener('change', (e)=>{
+  if(e.target.checked){ load(); timer=setInterval(load, 5000); }
+  else { clearInterval(timer); timer=null; }
+});
+
+// Initial load
+load();
+</script>
+</body>
+</html> -->
+
+
+
+
+
+
+
+<!-- <!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Process Monitor</title>
+  <style>
+    :root { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
+    body { margin: 0; background:#0b1220; color:#e5e7eb; }
+    header { display:flex; gap:12px; align-items:center; padding:16px 20px; background:#111827; position:sticky; top:0; z-index:10; }
+    h1 { font-size:18px; margin:0; }
+    .controls { margin-left:auto; display:flex; gap:8px; }
+    .btn { background:#1f2937; color:#e5e7eb; border:1px solid #374151; padding:8px 12px; border-radius:10px; cursor:pointer; }
+    .btn:hover { background:#2b3444; }
+    .container { padding:16px 20px; }
+    .meta { opacity:0.8; font-size:13px; margin-bottom:8px; }
+    .tree { list-style:none; padding-left:0; }
+    .node { margin:2px 0; }
+    .row { display:flex; align-items:center; gap:8px; padding:4px 6px; border-radius:8px; }
+    .row:hover { background:#0f1a2b; }
+    .arrow { width:0; height:0; border-left:6px solid transparent; border-right:6px solid transparent; border-top:8px solid #9ca3af; transition: transform .15s ease; cursor:pointer; }
+    .arrow.down { transform: rotate(180deg); }
+    .pill { font-size:12px; padding:2px 6px; border-radius:9999px; background:#1f2937; border:1px solid #374151; }
+    .children { margin-left:18px; border-left:1px dashed #334155; padding-left:10px; }
+    .search { background:#0b1220; color:#e5e7eb; border:1px solid #374151; border-radius:10px; padding:8px 10px; width:260px; }
+    .hostname { font-weight:600; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🧩 Process Monitor</h1>
+    <input id="host" class="search" placeholder="Hostname (optional)" />
+    <div class="controls">
+      <button class="btn" id="refresh">Refresh</button>
+      <label style="display:flex;align-items:center;gap:6px" class="btn">
+        <input type="checkbox" id="autorefresh" /> Auto‑refresh 5s
+      </label>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="meta" id="meta"></div>
+    <ul class="tree" id="tree"></ul>
+  </div>
+
+<script>
+const $ = (s)=>document.querySelector(s);
+let timer=null;
+
+function formatBytes(b){ if(b==null) return '—'; const u=['B','KB','MB','GB','TB']; let i=0; while(b>=1024&&i<u.length-1){ b/=1024;i++; } return b.toFixed(1)+' '+u[i]; }
+
+function buildTree(processes){
+  const byPid = new Map();
+  const children = new Map();
+  processes.forEach(p=>{byPid.set(p.pid,p); children.set(p.pid, []);});
+  const roots=[];
+  processes.forEach(p=>{
+    if(children.has(p.ppid)) children.get(p.ppid).push(p);
+    else roots.push(p);
+  });
+  return {roots, children};
+}
+
+function renderNode(p, childrenMap){
+  const hasKids = (childrenMap.get(p.pid)||[]).length>0;
+  const li=document.createElement('li'); li.className='node';
+  const row=document.createElement('div'); row.className='row';
+  const arrow=document.createElement('div'); arrow.className='arrow';
+  if(hasKids){ arrow.classList.add('down'); } else { arrow.style.visibility='hidden'; }
+  const title=document.createElement('div'); title.textContent=`${p.name} (${p.pid})`;
+  const cpu=document.createElement('span'); cpu.className='pill'; cpu.textContent=`CPU ${p.cpu_percent?.toFixed?.(1) ?? '—'}%`;
+  const mem=document.createElement('span'); mem.className='pill'; mem.textContent=`Mem ${formatBytes(p.mem_rss)} (${p.mem_percent?.toFixed?.(1) ?? '—'}%)`;
+  row.appendChild(arrow); row.appendChild(title); row.appendChild(cpu); row.appendChild(mem);
+  li.appendChild(row);
+  const kids=document.createElement('ul'); kids.className='children';
+  (childrenMap.get(p.pid)||[]).sort((a,b)=>b.cpu_percent - a.cpu_percent).forEach(k=>kids.appendChild(renderNode(k, childrenMap)));
+  if(hasKids) li.appendChild(kids);
+  row.addEventListener('click', ()=>{
+    if(!hasKids) return; kids.style.display = kids.style.display==='none' ? '' : 'none'; arrow.classList.toggle('down');
+  });
+  return li;
+}
+
+async function load(){
+  const host=$('#host').value.trim();
+  const url = host ? `/api/v1/process-snapshots/latest?hostname=${encodeURIComponent(host)}` : '/api/v1/process-snapshots/latest';
+  const res = await fetch(url);
+  const meta=$('#meta');
+  const tree=$('#tree');
+  tree.innerHTML='';
+  if(!res.ok){ meta.textContent='No data yet. Run the agent.'; return; }
+  const data = await res.json();
+  meta.innerHTML = `Host <span class="hostname">${data.hostname}</span> • Snapshot: ${new Date(data.created_at).toLocaleString()} • Processes: ${data.processes.length}`;
+  const {roots, children} = buildTree(data.processes);
+  roots.sort((a,b)=>b.cpu_percent - a.cpu_percent).forEach(r=>tree.appendChild(renderNode(r, children)));
+}
+
+$('#refresh').addEventListener('click', load);
+$('#autorefresh').addEventListener('change', (e)=>{
+  if(e.target.checked){ load(); timer=setInterval(load, 5000); }
+  else { clearInterval(timer); timer=null; }
+});
+
+load();
+</script>
+</body>
+</html> -->
