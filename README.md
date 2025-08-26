@@ -104,6 +104,7 @@ Then open http://127.0.0.1:8000/admin to inspect Snapshots and Processes.
 ---
 ---
 # 🧱 Project Structure
+```
 process-monitor-agent/
 ├─ backend/
 │ ├─ manage.py
@@ -128,3 +129,4 @@ process-monitor-agent/
    ├─ monitor_agent.py
    ├─ agent.ini
    └─ requirements.txt
+```
