@@ -1,10 +1,10 @@
 # Process-Monitoring-Agent
-Process Monitoring Agent with Django Backend
+Process Monitoring Agent with Django Backend + Python + API
 # 1. Project Overview
 ### Collects system & process data → sends to backend → visual dashboard.
-- **Agent** (Python script → EXE) -Runs on each system, collects CPU, RAM, process tree using psutil → REST API → Django backend. and sends it to backend.
-- **Backend** (Django + DRF + SQLite) - Stores data in database, provides REST APIs.
-- **Frontend** (HTML + JS) - Shows process tree, system metrics in real-time.
+- **1. Agent** (Python script → EXE) -Runs on each system, collects CPU, RAM, process tree using psutil → REST API → Django backend. and sends it to backend.
+- **2. Backend** (Django + DRF + SQLite) - Stores data in database, provides REST APIs.
+- **3. Frontend** (HTML + JS) - Shows process tree, system metrics in real-time.
 
 ---
 
